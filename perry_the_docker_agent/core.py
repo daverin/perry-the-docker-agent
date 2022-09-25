@@ -203,6 +203,9 @@ class RemoteDockerClient:
 
         # First push the local replica's contents to remote
         logger.info("Pushing local files to remote server")
+
+        logger.info(f"syncing self.sync_dir={self.sync_dir}")
+        return 
         subprocess.run(
             self._get_unison_cmd(
                 ip=ip,

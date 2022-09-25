@@ -1,34 +1,18 @@
 aws_region: af-south-1
 instance_type: t3.large
 volume_size: 100
-sync_dir: /Users/daverin/Beamm/ranger-containers
-project_id: "ranger"
+sync_dir: ./
+project_id: "some-project-id"
 ignore_dirs:
   - .venv
   - .git
   - node_modules
   - __pycache__
-local_port_forwards:
-  creator_api:
+remote_port_forwards:
+  local-webpack-app:
     "8080": "8080"
-  composable_api:
-    "7070": "7070"
-  render_api:
-    "9090": "9090"
-  collection_api:
-    "4040": "4040"
-  post_api:
-    "3030": "3030"
-  rig:
-    "4010": "4010"
-    "4000": "4000"
-  connect:
-    "8083": "8083"
-  elastic:
-    "9200": "9200"
-    "9300": "9300"
-  kafka:
-    "9092": "9092"
-    "9101": "9101"
-  appsync-simulator:
+local_port_forwards:
+  user-api:
     "2020": "2020"
+  blog-api:
+    "3030": "3030"

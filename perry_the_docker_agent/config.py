@@ -50,4 +50,4 @@ class PerryConfig(BaseModel):
     
     @property
     def expanded_sync_dir(self) -> str:
-        return os.path.expanduser(self.sync_dir)
+        return os.path.expanduser(self.sync_dir.absolute())
