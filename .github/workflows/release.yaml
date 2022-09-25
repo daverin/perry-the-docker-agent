@@ -28,7 +28,7 @@ jobs:
           python-version: 3.9
 
       - name: Publish to pypi
-        uses: coveooss/pypi-publish-with-poetry@v1.0.0
+        uses: coveooss/pypi-publish-with-poetry@v2
         with:
           project-name: perry
           pypi-token: ${{ secrets.PYPI_TOKEN }}
