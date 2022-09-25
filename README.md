@@ -203,7 +203,7 @@ Nothing else used should incur any cost with reasonable usage
 - The unison version running on the server and running locally have to
 match. If one of them updates to a newer version, you should update the other.
 
-## Perry improvements over [remote-docker-aws](https://github.com/lime-green/remote-docker-aws)
+## Perry improvements on [remote-docker-aws](https://github.com/lime-green/remote-docker-aws)
 - Perry is configured to the project by a local `perry_config.yml`
 - Perry uses [poetry](https://github.com/python-poetry/poetry), [pydantic](https://github.com/pydantic/pydantic) and [typer](https://github.com/tiangolo/typer)
 - Perry enables swap accounting on the remote ec2 instance which allows docker-compose resource limits
