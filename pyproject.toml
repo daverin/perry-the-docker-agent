@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "perry"
-version = "1.1.2"
+version = "0.1.0"
 description = "Your cool remote docker agent in the cloud"
 authors = ["Daverin <mail@daverin.net>"]
 license = "MIT"
