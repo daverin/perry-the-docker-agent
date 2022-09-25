@@ -1,5 +1,5 @@
-## Perry
-### your cool remote docker agent in the cloud 
+## Perry The Docker Agent
+### Your cool remote docker agent in the cloud 
 
 [![PyPI version](https://badge.fury.io/py/remote-docker-aws.svg)](https://badge.fury.io/py/remote-docker-aws)
 ![Python versions](https://img.shields.io/pypi/pyversions/remote-docker-aws.svg?style=flat-square&label=Python%20Versions)
@@ -50,7 +50,9 @@ How it works: two processes are run, a sync and a tunnel process.
    Have [pipx](https://github.com/pipxproject/pipx)
 
     ```bash
-   pipx install perry
+   pip install perry-the-docker-agent
+   # or.... if part of a project
+   poetry add perry-the-docker-agent
 
    # Install unison sync utility
    brew install unison
