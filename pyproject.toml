@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Your cool remote docker agent in the cloud"
 authors = ["Daverin <mail@daverin.net>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/daverin/perry-the-docker-agent/"
 
 [tool.poetry.dependencies]
 python = "^3.9"
