@@ -1,11 +1,11 @@
 import typer
 from rich import print
-from perry.core import (
+from .core import (
     create_remote_docker_client,
     RemoteDockerClient
 )
 from yaml import safe_load
-from perry.config import PerryConfig
+from .config import PerryConfig
 
 app = typer.Typer()
 

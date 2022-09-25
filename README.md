@@ -1,8 +1,8 @@
 ## Perry The Docker Agent
 ### Your cool remote docker agent in the cloud 
 
-[![PyPI version](https://badge.fury.io/py/remote-docker-aws.svg)](https://badge.fury.io/py/remote-docker-aws)
-![Python versions](https://img.shields.io/pypi/pyversions/remote-docker-aws.svg?style=flat-square&label=Python%20Versions)
+[![PyPI version](https://badge.fury.io/py/perry-the-docker-agent.svg)](https://badge.fury.io/py/perry-the-docker-agent)
+![Python versions](https://img.shields.io/pypi/pyversions/perry-the-docker-agent.svg?style=flat-square&label=Python%20Versions)
 
 Based on [remote-docker-aws](https://github.com/lime-green/remote-docker-aws) 🙏🏾
 

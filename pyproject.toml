@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "perry"
+name = "perry-the-docker-agent"
 version = "0.1.0"
 description = "Your cool remote docker agent in the cloud"
 authors = ["Daverin <mail@daverin.net>"]
 license = "MIT"
-packages = [{include = "perry"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -18,7 +17,7 @@ pydantic = "^1.10.2"
 PyYAML = "5.4.1"
 
 [tool.poetry.scripts]
-perry = "perry:main.app"
+perry = "perry_the_docker_agent:main.app"
 
 [build-system]
 requires = ["poetry-core"]
