@@ -68,7 +68,7 @@ How it works: two processes are run, a sync and a tunnel process.
 1. Generate and upload a keypair to AWS
 
     ```bash
-   perry create-keypair
+   perry create-key-pair
     ```
 
 1. Create the ec2 instance
