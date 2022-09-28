@@ -197,7 +197,7 @@ class RemoteDockerClient:
         logger.info("deleting any files owned by root (this messes with unison)")
 
         clean_cmd = (
-            f"find {self.sync_dir} -user root -exec rm -fr {{}} \\\;"
+            f"find {self.sync_dir} -user root -exec sudo rm -fr {{}} \\\;"
         )
         self.ssh_run(ssh_cmd=clean_cmd)
 
