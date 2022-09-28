@@ -155,7 +155,7 @@ local_port_forwards:
 ╰─────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-The current configurable values can be seen in [config.py](perry/config.py)
+The current configurable values can be seen in [config.py](perry_the_docker_agent/config.py)
 
 #### `aws_region` (takes precedence over `AWS_REGION` and `.aws/config`)
 - The region to create the instance in
