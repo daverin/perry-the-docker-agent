@@ -4,7 +4,7 @@ import subprocess
 import sys
 import time
 from functools import lru_cache
-from typing import Dict
+from typing import Dict, Optional
 
 import boto3
 from sceptre.context import SceptreContext
@@ -95,6 +95,7 @@ class AWSInstanceProvider(InstanceProvider):
         project_code: str,
         instance_service_name: str,
         instance_type: str,
+        instance_ami: Optional[str],
         ssh_key_pair_name: str,
         volume_size: int,
         **kwargs,
@@ -104,6 +105,7 @@ class AWSInstanceProvider(InstanceProvider):
         self.project_code = project_code
         self.instance_service_name = instance_service_name
         self.instance_type = instance_type
+        self.instance_ami = instance_ami
         self.ssh_key_pair_name = ssh_key_pair_name
         self.volume_size = volume_size
 
@@ -199,12 +201,14 @@ class AWSInstanceProvider(InstanceProvider):
         )
 
     def _get_sceptre_plan(self) -> SceptrePlan:
+        if self.instance_ami != None:
+            logger.info(f"Creating with {self.instance_ami }")    
         context = SceptreContext(
             SCEPTRE_PATH,
             "dev/application.yaml",
             user_variables=dict(
                 key_pair_name=self.ssh_key_pair_name,
-                image_id=AWS_REGION_TO_UBUNTU_AMI_MAPPING[self.aws_region],
+                image_id=self.instance_ami if self.instance_ami != None else AWS_REGION_TO_UBUNTU_AMI_MAPPING[self.aws_region],
                 instance_type=self.instance_type,
                 project_code=self.project_code,
                 region=self.aws_region,

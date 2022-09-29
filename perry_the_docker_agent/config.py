@@ -11,6 +11,7 @@ SCEPTRE_PROJECT_CODE = "perry"
 class PerryConfig(BaseModel):
     aws_region: str = "us-east-1"
     instance_type: str = "t3.medium"
+    instance_ami: Optional[str]
     project_id: Optional[str]
     key_path: Optional[str]
     volume_size: int = 30

@@ -39,6 +39,7 @@ class RemoteDockerClient:
             aws_region=config.aws_region,
             instance_service_name=config.instance_service_name,
             instance_type=config.instance_type,
+            instance_ami=config.instance_ami,
             ssh_key_pair_name=config.key_pair_name,
             volume_size=config.volume_size,
         )

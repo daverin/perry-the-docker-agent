@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "perry-the-docker-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Your cool remote docker agent in the cloud"
 authors = ["Daverin <mail@daverin.net>"]
 license = "MIT"
