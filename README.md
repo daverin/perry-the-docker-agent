@@ -68,7 +68,7 @@ How it works: two processes are run, a sync and a tunnel process.
 1. Generate and upload a keypair to AWS
 
     ```bash
-   perry create-keypair
+   perry create-key-pair
     ```
 
 1. Create the ec2 instance
@@ -155,7 +155,7 @@ local_port_forwards:
 ╰─────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-The current configurable values can be seen in [config.py](perry/config.py)
+The current configurable values can be seen in [config.py](perry_the_docker_agent/config.py)
 
 #### `aws_region` (takes precedence over `AWS_REGION` and `.aws/config`)
 - The region to create the instance in

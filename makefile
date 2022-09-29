@@ -1,7 +1,7 @@
 perry-sync:
 	perry sync
 
-perry-tunel:
+perry-tunnel:
 	perry tunnel
 
 perry-stop:
