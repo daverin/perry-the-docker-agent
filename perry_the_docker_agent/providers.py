@@ -200,9 +200,7 @@ class AWSInstanceProvider(InstanceProvider):
             PublicKeyMaterial=file_bytes,
         )
 
-    def _get_sceptre_plan(self) -> SceptrePlan:
-        if self.instance_ami != None:
-            logger.info(f"Creating with {self.instance_ami }")    
+    def _get_sceptre_plan(self) -> SceptrePlan:  
         context = SceptreContext(
             SCEPTRE_PATH,
             "dev/application.yaml",
