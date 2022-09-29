@@ -255,11 +255,11 @@ class AWSInstanceProvider(InstanceProvider):
         && sudo echo GRUB_CMDLINE_LINUX=\\"\"cdgroup_enable=memory swapaccount=1\\"\" | sudo tee -a /etc/default/grub.d/50-cloudimg-settings.cfg
         && sudo update-grub
         && sudo apt-get -y update
-        && sudo apt-get -y install docker.io
-        && sudo usermod -aG docker ubuntu
-        && sudo systemctl daemon-reload
-        && sudo systemctl restart docker.service
-        && sudo systemctl enable docker.service
+        && sudo apt-get -y install docker.io || true
+        && sudo usermod -aG docker ubuntu  || true
+        && sudo systemctl daemon-reload || true
+        && sudo systemctl restart docker.service || true
+        && sudo systemctl enable docker.service || true
         && "sudo sed -i -e '/GatewayPorts/ s/^.*$/GatewayPorts yes/' '/etc/ssh/sshd_config'"
         && sudo service sshd restart
         && wget -qO- https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v2.52.1+ocaml-4.01.0+x86_64.linux.tar.gz | tar -xvz
