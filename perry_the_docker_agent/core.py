@@ -15,11 +15,13 @@ from .util import logger
 class RemoteDockerClient:
     def __init__(
         self,
+        *,
         instance: InstanceProvider,
         local_port_forwards: Dict[str, Dict[str, str]],
         remote_port_forwards: Dict[str, Dict[str, str]],
         ssh_key_path: str,
         sync_dir: str,
+        sync_paths: List[str],
         ignore_dirs: str,
         project_code: str,
     ):
@@ -28,6 +30,7 @@ class RemoteDockerClient:
         self.remote_port_forwards = remote_port_forwards
         self.ssh_key_path = ssh_key_path
         self.sync_dir = sync_dir
+        self.sync_paths = sync_paths
         self.ignore_dirs = ignore_dirs
         self.project_code = project_code
 
@@ -51,6 +54,7 @@ class RemoteDockerClient:
             remote_port_forwards=config.remote_port_forwards,
             ssh_key_path=config.non_null_key_path,
             sync_dir=config.expanded_sync_dir,
+            sync_paths=config.expanded_sync_paths,
             ignore_dirs=config.ignore_dirs,
             project_code=config.project_code
         )
@@ -165,6 +169,7 @@ class RemoteDockerClient:
         *,
         ip: str,
         replica_path: str,
+        sync_paths: List[str],
         ignore_dirs: List[str],
         force: bool = False,
         repeat_watch: bool = False,
@@ -174,6 +179,9 @@ class RemoteDockerClient:
             f" 'ssh://{self.instance.username}@{ip}/{replica_path}'"
             f" -prefer {replica_path} -batch -sshargs '-i {self.ssh_key_path}'"
         )
+
+        for sync_path in sync_paths:
+            cmd_s += f" -path {sync_path}"
         
         for ignore_dir in ignore_dirs:
             cmd_s += f" -ignore 'Name {{,.*,*,*/,.*/}}{ignore_dir}{{.*,*,*/,.*/}}'"
@@ -205,14 +213,19 @@ class RemoteDockerClient:
 
         # First push the local replica's contents to remote
         logger.info("Pushing local files to remote server")
+        
+        push_cmd = self._get_unison_cmd(
+            ip=ip,
+            replica_path=self.sync_dir,
+            sync_paths=self.sync_paths,
+            ignore_dirs=self.ignore_dirs,
+            force=True,
+        )
 
+        logger.info(f"Running push command: {push_cmd}")
+        
         subprocess.run(
-            self._get_unison_cmd(
-                ip=ip,
-                replica_path=self.sync_dir,
-                ignore_dirs=self.ignore_dirs,
-                force=True,
-            ),
+            push_cmd,
             check=True,
         )
 
@@ -222,10 +235,11 @@ class RemoteDockerClient:
             ip=ip,
             replica_path=self.sync_dir,
             ignore_dirs=self.ignore_dirs,
+            sync_paths=self.sync_paths,
             repeat_watch=True,
         )
 
-        logger.debug("Running command: %s", watch_cmd)
+        logger.info(f"Running watch command: {watch_cmd}")
         os.execvp(watch_cmd[0], watch_cmd)
 
 

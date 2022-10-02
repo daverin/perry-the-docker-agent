@@ -2,9 +2,11 @@ aws_region: af-south-1
 instance_type: g4dn.xlarge
 instance_ami: ami-0a636d96511f61b74
 volume_size: 200
-sync_dir: ./
-project_id: "ranger-dav"
-credentials_profile_name: 621807156864_AdministratorAccess
+sync_paths:
+  - ./
+  - ~/.aws
+project_id: some-project-identifier
+credentials_profile_name: playground
 ignore_dirs:
   - .venv
   - .git
@@ -12,30 +14,7 @@ ignore_dirs:
   - __pycache__
   - diffusers-cache
 local_port_forwards:
-  creator_api:
-    "8080": "8080"
-  composable_api:
-    "7070": "7070"
-  render_api:
-    "9090": "9090"
-  collection_api:
-    "4040": "4040"
-  post_api:
-    "3030": "3030"
-  rig:
-    "4010": "4010"
-    "4000": "4000"
-  connect:
-    "8083": "8083"
-  elastic:
-    "9200": "9200"
-    "9300": "9300"
-  kafka:
-    "9092": "9092"
-    "9101": "9101"
-  appsync-simulator:
+  user-api:
     "2020": "2020"
-  stable-diffusion-consumer:
-    "5000": "5000"
-  real-esrgan-consumer:
-    "5001": "5001"
+  blog-api:
+    "3030": "3030"

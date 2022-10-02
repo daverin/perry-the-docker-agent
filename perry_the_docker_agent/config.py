@@ -19,7 +19,7 @@ class PerryConfig(BaseModel):
     ignore_dirs: List[str] = []
     local_port_forwards: Dict[str,Dict[str,str]] = {}
     remote_port_forwards: Dict[str,Dict[str,str]] = {}
-    sync_dir: Path
+    sync_paths: List[Path]
 
     @property
     def instance_service_name(self) -> str:
@@ -52,4 +52,8 @@ class PerryConfig(BaseModel):
     
     @property
     def expanded_sync_dir(self) -> str:
-        return os.path.expanduser(self.sync_dir.absolute())
+        return os.path.expanduser("~")
+    
+    @property
+    def expanded_sync_paths(self) -> List[str]:
+        return [Path(os.path.expanduser(f)).absolute().as_posix().split(self.expanded_sync_dir+"/")[1] for f in self.sync_paths]
