@@ -1,18 +1,41 @@
 aws_region: af-south-1
-instance_type: t3.large
-volume_size: 100
+instance_type: g4dn.xlarge
+instance_ami: ami-0a636d96511f61b74
+volume_size: 200
 sync_dir: ./
-project_id: "some-project-id"
+project_id: "ranger-dav"
+credentials_profile_name: 621807156864_AdministratorAccess
 ignore_dirs:
   - .venv
   - .git
   - node_modules
   - __pycache__
-remote_port_forwards:
-  local-webpack-app:
-    "8080": "8080"
+  - diffusers-cache
 local_port_forwards:
-  user-api:
-    "2020": "2020"
-  blog-api:
+  creator_api:
+    "8080": "8080"
+  composable_api:
+    "7070": "7070"
+  render_api:
+    "9090": "9090"
+  collection_api:
+    "4040": "4040"
+  post_api:
     "3030": "3030"
+  rig:
+    "4010": "4010"
+    "4000": "4000"
+  connect:
+    "8083": "8083"
+  elastic:
+    "9200": "9200"
+    "9300": "9300"
+  kafka:
+    "9092": "9092"
+    "9101": "9101"
+  appsync-simulator:
+    "2020": "2020"
+  stable-diffusion-consumer:
+    "5000": "5000"
+  real-esrgan-consumer:
+    "5001": "5001"

@@ -42,6 +42,7 @@ class RemoteDockerClient:
             instance_ami=config.instance_ami,
             ssh_key_pair_name=config.key_pair_name,
             volume_size=config.volume_size,
+            credentials_profile_name=config.credentials_profile_name
         )
 
         return cls(

@@ -19,8 +19,12 @@ from .util import logger, wait_until_port_is_open
 
 
 @lru_cache()
-def _get_ec2_client(region):
-    return boto3.client("ec2", region_name=region)
+def _get_ec2_client(region, *, profile_name: str):
+    session = boto3.Session(profile_name=profile_name)
+    return session.client(
+        "ec2", 
+        region_name=region, 
+    )
 
 
 class InstanceProvider:
@@ -98,6 +102,7 @@ class AWSInstanceProvider(InstanceProvider):
         instance_ami: Optional[str],
         ssh_key_pair_name: str,
         volume_size: int,
+        credentials_profile_name: str,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -108,10 +113,14 @@ class AWSInstanceProvider(InstanceProvider):
         self.instance_ami = instance_ami
         self.ssh_key_pair_name = ssh_key_pair_name
         self.volume_size = volume_size
+        self.credentials_profile_name = credentials_profile_name
 
     @property
     def _ec2_client(self):
-        return _get_ec2_client(self.aws_region)
+        return _get_ec2_client(
+            self.aws_region,
+            profile_name=self.credentials_profile_name
+        )
 
     def _search_for_instances(self) -> Dict:
         return self._ec2_client.describe_instances(

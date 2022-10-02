@@ -14,6 +14,7 @@ class PerryConfig(BaseModel):
     instance_ami: Optional[str]
     project_id: Optional[str]
     key_path: Optional[str]
+    credentials_profile_name: str = "default"
     volume_size: int = 30
     ignore_dirs: List[str] = []
     local_port_forwards: Dict[str,Dict[str,str]] = {}
