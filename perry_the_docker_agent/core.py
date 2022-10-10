@@ -24,6 +24,7 @@ class RemoteDockerClient:
         sync_paths: List[str],
         ignore_dirs: str,
         project_code: str,
+        bind_address: str,
     ):
         self.instance = instance
         self.local_port_forwards = local_port_forwards
@@ -33,6 +34,7 @@ class RemoteDockerClient:
         self.sync_paths = sync_paths
         self.ignore_dirs = ignore_dirs
         self.project_code = project_code
+        self.bind_address = bind_address
 
     @classmethod
     def from_config(cls, config: PerryConfig):
@@ -56,7 +58,8 @@ class RemoteDockerClient:
             sync_dir=config.expanded_sync_dir,
             sync_paths=config.expanded_sync_paths,
             ignore_dirs=config.ignore_dirs,
-            project_code=config.project_code
+            project_code=config.project_code,
+            bind_address=config.bind_address
         )
 
     def get_ip(self) -> str:
@@ -101,7 +104,7 @@ class RemoteDockerClient:
 
         for _name, port_mappings in self.local_port_forwards.items():
             for port_from, port_to in port_mappings.items():
-                cmd_s += f" -L localhost:{port_from}:localhost:{port_to}"
+                cmd_s += f" -L {self.bind_address}:{port_from}:localhost:{port_to}"
 
         for _name, port_mappings in self.remote_port_forwards.items():
             for port_from, port_to in port_mappings.items():

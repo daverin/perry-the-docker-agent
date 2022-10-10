@@ -13,6 +13,7 @@ class PerryConfig(BaseModel):
     instance_type: str = "t3.medium"
     instance_ami: Optional[str]
     project_id: Optional[str]
+    bind_address: str = "localhost"
     key_path: Optional[str]
     credentials_profile_name: str = "default"
     volume_size: int = 30

@@ -7,6 +7,7 @@ sync_paths:
   - ~/.aws
 project_id: some-project-identifier
 credentials_profile_name: playground
+bind_address: "0.0.0.0"
 ignore_dirs:
   - .venv
   - .git
