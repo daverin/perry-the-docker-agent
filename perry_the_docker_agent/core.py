@@ -5,9 +5,6 @@ from getpass import getuser
 from typing import Dict, List
 
 from .config import PerryConfig
-from .constants import (
-    INSTANCE_USERNAME
-)
 from .providers import AWSInstanceProvider, InstanceProvider
 from .util import logger
 
@@ -39,10 +36,11 @@ class RemoteDockerClient:
     @classmethod
     def from_config(cls, config: PerryConfig):
         instance = AWSInstanceProvider(
-            username=INSTANCE_USERNAME,
+            username=config.instance_username,
             project_code=config.project_code,
             aws_region=config.aws_region,
             instance_service_name=config.instance_service_name,
+            bootstrap_command=config.bootstrap_command,
             instance_type=config.instance_type,
             instance_ami=config.instance_ami,
             ssh_key_pair_name=config.key_pair_name,

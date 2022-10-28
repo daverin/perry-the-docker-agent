@@ -1,2 +1,3 @@
 project_code: {{ var.project_code }}
 region: {{ var.region }}
+profile: {{ var.profile }}

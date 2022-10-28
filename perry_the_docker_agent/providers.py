@@ -11,7 +11,6 @@ from sceptre.context import SceptreContext
 from sceptre.plan.plan import SceptrePlan
 
 from .constants import (
-    AWS_REGION_TO_UBUNTU_AMI_MAPPING,
     SCEPTRE_PATH,
 )
 from .exceptions import InstanceNotRunning, RemoteDockerException
@@ -103,6 +102,7 @@ class AWSInstanceProvider(InstanceProvider):
         ssh_key_pair_name: str,
         volume_size: int,
         credentials_profile_name: str,
+        bootstrap_command: str,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -114,6 +114,7 @@ class AWSInstanceProvider(InstanceProvider):
         self.ssh_key_pair_name = ssh_key_pair_name
         self.volume_size = volume_size
         self.credentials_profile_name = credentials_profile_name
+        self.bootstrap_command = bootstrap_command
 
     @property
     def _ec2_client(self):
@@ -221,16 +222,18 @@ class AWSInstanceProvider(InstanceProvider):
                 region=self.aws_region,
                 service_name=self.instance_service_name,
                 volume_size=int(self.volume_size),
+                profile=self.credentials_profile_name
             ),
         )
         return SceptrePlan(context)
 
     def create_instance(self, ssh_key_path):
-        result = self._get_sceptre_plan().create()
+        sceptre_result = self._get_sceptre_plan().create()
 
-        logger.debug("Got sceptre result: %s", result)
-        if "complete" not in result.values():
-            raise Exception(f"sceptre command failed: {list(result.values())}")
+        logger.info(f"sceptre_result={sceptre_result}")
+
+        if "complete" not in sceptre_result.values():
+            raise Exception(f"sceptre command failed: {list(sceptre_result.values())}")
         logger.info("Stack created")
 
         while self.get_instance_state() != "running":
@@ -243,7 +246,6 @@ class AWSInstanceProvider(InstanceProvider):
         wait_until_port_is_open(ip, 22, sleep_time=20, max_attempts=20)
         # Give it some extra time, AWS can throw fopen errors on apt-get update
         # if this is too rushed
-        time.sleep(20)
         logger.info("Starting bootstrap")
         self._bootstrap_instance(ssh_key_path)
 
@@ -258,24 +260,8 @@ class AWSInstanceProvider(InstanceProvider):
     # flake8: noqa: E501
     def _bootstrap_instance(self, ssh_key_path: str):
         logger.info("Bootstrapping instance, will take a few minutes")
-        configure_instance_cmd_s = r"""
-        set -x
-        && sudo sysctl -w net.core.somaxconn=4096
-        && sudo echo GRUB_CMDLINE_LINUX=\\"\"cdgroup_enable=memory swapaccount=1\\"\" | sudo tee -a /etc/default/grub.d/50-cloudimg-settings.cfg
-        && sudo update-grub
-        && sudo apt-get -y update
-        && sudo apt-get -y install docker.io || true
-        && sudo usermod -aG docker ubuntu  || true
-        && sudo systemctl daemon-reload || true
-        && sudo systemctl restart docker.service || true
-        && sudo systemctl enable docker.service || true
-        && "sudo sed -i -e '/GatewayPorts/ s/^.*$/GatewayPorts yes/' '/etc/ssh/sshd_config'"
-        && sudo service sshd restart
-        && wget -qO- https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v2.52.1+ocaml-4.01.0+x86_64.linux.tar.gz | tar -xvz
-        && sudo mv bin/* /usr/local/bin/
-        && sudo reboot
-        """
-        self.ssh_connect(ssh_key_path=ssh_key_path, ssh_cmd=configure_instance_cmd_s)
+        
+        self.ssh_connect(ssh_key_path=ssh_key_path, ssh_cmd=self.bootstrap_command)
 
     def create_keypair(self, ssh_key_path) -> Dict:
         # shell=True with `ssh-keygen` doesn't seem to be passing path correctly

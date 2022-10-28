@@ -10,13 +10,6 @@ from .config import PerryConfig
 app = typer.Typer()
 
 @app.command()
-def test(
-    ctx: typer.Context
-):
-    """Test new config"""
-    print("hello Dav :)")
-
-@app.command()
 def create_key_pair(
     ctx: typer.Context
 ):
