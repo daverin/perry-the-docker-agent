@@ -216,7 +216,7 @@ class AWSInstanceProvider(InstanceProvider):
             "dev/application.yaml",
             user_variables=dict(
                 key_pair_name=self.ssh_key_pair_name,
-                image_id=self.instance_ami if self.instance_ami != None else AWS_REGION_TO_UBUNTU_AMI_MAPPING[self.aws_region],
+                image_id=self.instance_ami,
                 instance_type=self.instance_type,
                 project_code=self.project_code,
                 region=self.aws_region,
