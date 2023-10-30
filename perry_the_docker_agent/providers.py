@@ -89,8 +89,17 @@ class InstanceProvider:
             f" {options} {self.username}@{self.get_ip()} {ssh_cmd}"
         )
 
-        logger.debug("Running: %s", shlex.split(cmd_s))
-        return shlex.split(cmd_s)
+        logger.debug(
+            "Running: %s",
+            shlex.split(
+                cmd_s,
+                posix=platform.system() != "Windows",
+            ),
+        )
+        return shlex.split(
+            cmd_s,
+            posix=platform.system() != "Windows",
+        )
 
 
 class AWSInstanceProvider(InstanceProvider):
