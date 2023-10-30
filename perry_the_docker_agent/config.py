@@ -1,12 +1,15 @@
 import os
 from pathlib import Path
 from typing import Dict, List, Optional
+import os
 
 from pydantic import BaseModel
+import platform
 
 KEY_PAIR_NAME = "perry-keypair"
 INSTANCE_SERVICE_NAME = "perry-ec2-agent"
 SCEPTRE_PROJECT_CODE = "perry"
+
 
 class PerryConfig(BaseModel):
     # --- aws properties
@@ -21,16 +24,17 @@ class PerryConfig(BaseModel):
 
     # --- ssh
     key_path: Optional[str]
-    
+
     # -- labeling
-    env_label: Optional[str] = "USER"
+    env_label: Optional[str]
+
     env_label_suffix: str = "s"
     separator: str = "-"
-    
+
     # --- unison properties
     ignore_dirs: List[str] = []
-    local_port_forwards: Dict[str,Dict[str,str]] = {}
-    remote_port_forwards: Dict[str,Dict[str,str]] = {}
+    local_port_forwards: Dict[str, Dict[str, str]] = {}
+    remote_port_forwards: Dict[str, Dict[str, str]] = {}
     sync_paths: List[Path]
 
     # --- instance properties
@@ -85,17 +89,13 @@ class PerryConfig(BaseModel):
         "ap-east-1": "ami-c42464b5",
         "af-south-1": "ami-079652134906bcbad",
     }
-    
-    def _prefix(self, value: str)-> str:
+
+    def _prefix(self, value: str) -> str:
         value = f"{self.project_id}{self.separator}{value}"
 
-        if self.env_label is not None:
-            env_label = os.environ.get(self.env_label)
-            if env_label is  None:
-                raise Exception(f"{self.env_label} is not defined")
-            value = f"{env_label}{self.env_label_suffix}{self.separator}{value}"
+        env_label = os.environ.get(self.system_env_label)
+        value = f"{env_label}{self.env_label_suffix}{self.separator}{value}"
         return value
-                
 
     @property
     def instance_service_name(self) -> str:
@@ -104,23 +104,38 @@ class PerryConfig(BaseModel):
     @property
     def key_pair_name(self) -> str:
         return self._prefix(KEY_PAIR_NAME)
-    
+
     @property
     def non_null_key_path(self) -> str:
         if self.key_path is not None:
             return os.path.expanduser(self.key_path)
         else:
-            under_score_project_code = self.project_code.replace("-","_")
+            under_score_project_code = self.project_code.replace("-", "_")
             return os.path.expanduser(f"~/.ssh/id_rsa_{under_score_project_code}")
 
     @property
     def project_code(self) -> str:
         return self._prefix(SCEPTRE_PROJECT_CODE)
-    
+
     @property
     def expanded_sync_dir(self) -> str:
         return os.path.expanduser("~")
-    
+
     @property
     def expanded_sync_paths(self) -> List[str]:
-        return [Path(os.path.expanduser(f)).absolute().as_posix().split(self.expanded_sync_dir+"/")[1] for f in self.sync_paths]
+        return [
+            str(Path(os.path.expanduser(f)).absolute()).split(
+                self.expanded_sync_dir + os.sep
+            )[1]
+            for f in self.sync_paths
+        ]
+
+    @property
+    def system_env_label(self) -> str:
+        if self.env_label is not None:
+            return self.env_label
+        else:
+            if platform.system() == "Windows":
+                return os.environ.get("USERNAME")
+            else:
+                return os.environ.get("USER")
