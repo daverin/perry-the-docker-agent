@@ -5,6 +5,7 @@ import sys
 import time
 from functools import lru_cache
 from typing import Dict, Optional
+import platform
 
 import boto3
 from sceptre.context import SceptreContext
@@ -15,14 +16,15 @@ from .constants import (
 )
 from .exceptions import InstanceNotRunning, RemoteDockerException
 from .util import logger, wait_until_port_is_open
+import os
 
 
 @lru_cache()
 def _get_ec2_client(region, *, profile_name: str):
     session = boto3.Session(profile_name=profile_name)
     return session.client(
-        "ec2", 
-        region_name=region, 
+        "ec2",
+        region_name=region,
     )
 
 
@@ -119,8 +121,7 @@ class AWSInstanceProvider(InstanceProvider):
     @property
     def _ec2_client(self):
         return _get_ec2_client(
-            self.aws_region,
-            profile_name=self.credentials_profile_name
+            self.aws_region, profile_name=self.credentials_profile_name
         )
 
     def _search_for_instances(self) -> Dict:
@@ -210,7 +211,7 @@ class AWSInstanceProvider(InstanceProvider):
             PublicKeyMaterial=file_bytes,
         )
 
-    def _get_sceptre_plan(self) -> SceptrePlan:  
+    def _get_sceptre_plan(self) -> SceptrePlan:
         context = SceptreContext(
             SCEPTRE_PATH,
             "dev/application.yaml",
@@ -222,7 +223,7 @@ class AWSInstanceProvider(InstanceProvider):
                 region=self.aws_region,
                 service_name=self.instance_service_name,
                 volume_size=int(self.volume_size),
-                profile=self.credentials_profile_name
+                profile=self.credentials_profile_name,
             ),
         )
         return SceptrePlan(context)
@@ -260,23 +261,29 @@ class AWSInstanceProvider(InstanceProvider):
     # flake8: noqa: E501
     def _bootstrap_instance(self, ssh_key_path: str):
         logger.info("Bootstrapping instance, will take a few minutes")
-        
+
         self.ssh_connect(ssh_key_path=ssh_key_path, ssh_cmd=self.bootstrap_command)
 
     def create_keypair(self, ssh_key_path) -> Dict:
         # shell=True with `ssh-keygen` doesn't seem to be passing path correctly
         subprocess.run(
-            shlex.split(f"ssh-keygen -t rsa -b 4096 -f {ssh_key_path}"),
+            shlex.split(
+                f"ssh-keygen -t rsa -b 4096 -f {ssh_key_path}",
+                posix=platform.system() != "Windows",
+            ),
             check=True,
             stdout=sys.stdout,
             stderr=sys.stderr,
         )
-        subprocess.run(
-            shlex.split(f"ssh-add -K {ssh_key_path}"),
-            check=True,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-        )
+        if platform.system() != "Windows":
+            subprocess.run(
+                shlex.split(
+                    f"ssh-add -K {ssh_key_path}", posix=platform.system() != "Windows"
+                ),
+                check=True,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+            )
         return self._import_key(
             file_location=f"{ssh_key_path}.pub",
         )

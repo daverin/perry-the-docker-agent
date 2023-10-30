@@ -92,7 +92,6 @@ class PerryConfig(BaseModel):
 
     def _prefix(self, value: str) -> str:
         value = f"{self.project_id}{self.separator}{value}"
-
         env_label = os.environ.get(self.system_env_label)
         value = f"{env_label}{self.env_label_suffix}{self.separator}{value}"
         return value
@@ -108,10 +107,15 @@ class PerryConfig(BaseModel):
     @property
     def non_null_key_path(self) -> str:
         if self.key_path is not None:
-            return os.path.expanduser(self.key_path)
+            return str(Path(os.path.expanduser(self.key_path)))
         else:
             under_score_project_code = self.project_code.replace("-", "_")
-            return os.path.expanduser(f"~/.ssh/id_rsa_{under_score_project_code}")
+            key_path = str(
+                Path(os.path.expanduser(f"~/.ssh/id_rsa_{under_score_project_code}"))
+            )
+            return str(
+                Path(os.path.expanduser(f"~/.ssh/id_rsa_{under_score_project_code}"))
+            )
 
     @property
     def project_code(self) -> str:
@@ -136,6 +140,6 @@ class PerryConfig(BaseModel):
             return self.env_label
         else:
             if platform.system() == "Windows":
-                return os.environ.get("USERNAME")
+                return "USERNAME"
             else:
-                return os.environ.get("USER")
+                return "USER"
